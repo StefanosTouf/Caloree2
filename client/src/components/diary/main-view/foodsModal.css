@@ -1,0 +1,28 @@
+.custom-modal .ui.modals{
+    background-color: rgba(0,0,0,0);
+    
+}
+
+.custom-modal .background-overlay{
+    position: fixed;
+    background-color: rgba(0,0,0,0.5);
+    top:0;
+    bottom:0;
+    right:0;
+    left: 0;
+}
+
+
+.custom-modal .ui.modals .ui.modal{
+    overflow-y: visible !important;
+    height:unset !important;
+    position: sticky !important;
+    top:2rem;
+    
+    
+}
+
+
+.custom-modal .ui.modals .ui.modal .foods .foods-list{
+  max-height: 25rem;
+}

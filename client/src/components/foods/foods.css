@@ -1,0 +1,16 @@
+
+
+.foods-list{
+    height:40rem;
+    overflow-y: auto;
+}
+
+
+.foods .food-display.ui.segment{
+    width: 100%;
+}
+
+.foods .right.menu .ui.search{
+    width:100%; 
+    min-width:15rem;
+}

@@ -1,0 +1,64 @@
+#app{
+    background-color: rgba(0, 255,0, 0.02);
+    min-height: 100vh;
+}
+
+.ui.container{
+    padding-top: 2rem;
+}
+
+.ui.secondary.pointing.menu{
+    background-color: white;
+   
+}
+
+.ui.progress .bar{
+    min-width: 0;
+    max-width: 100%;
+    border-radius: 2px;
+    
+}
+.ui.progress {
+    padding: 0;
+    margin: 0;
+    
+}
+
+.ui.progress h5{
+    margin: 0;
+}
+
+.ui.progress .bar-wrapper{
+    width: 100%;
+    border: 1px solid rgb(214, 214, 214);
+    box-shadow: inset 0px 0px 3px rgba(0,0,0,0.15);
+    border-radius: 2px;
+    
+}
+
+.ui.progress .bar-wrapper .bar{
+    min-width: 0;
+    max-width: 100%;
+    
+    
+}
+
+.ui.progress:first-child {
+    margin: 0;
+}
+
+#menu-logo{
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+
+.ui.list .item .content{
+    color:rgb(49, 49, 49);
+    
+}
+
+.ui.selection.list .item:hover{
+    background-color: rgba(0,0,0,0.2) !important;
+    
+}

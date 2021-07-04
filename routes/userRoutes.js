@@ -1,24 +1,35 @@
 const passport = require('passport');
 const mongoose = require('mongoose');
+const _ = require('lodash');
 
 const User = mongoose.model('users');
 const TrackedNutrient = mongoose.model('trackedNutrients');
 
 module.exports = (app) => {
-  app.get('/api/user', (req, res) => {
-    console.log(req);
-    res.send(req.user);
+  app.get('/api/user', async (req, res) => {
+    const populatedUser = await User.findById(req.user.id).populate({
+      path: 'generalTargets',
+      populate: {
+        path: '_trackedNutrient',
+        model: 'trackedNutrients',
+      },
+    });
+
+    res.send(populatedUser);
   });
 
   app.patch('/api/user', async (req, res) => {
-    const trackedNutrients = TrackedNutrient.find();
-    const newNutrientTargets = req.params.nutrientTargets;
+    const trackedNutrients = _.mapKeys(
+      await TrackedNutrient.find(),
+      'shortName'
+    );
+    const nutrients = req.params.nutrientTargets;
 
     const parsedNewNutrientTargets = [];
-    for (let nutrient in newNutrientTargets) {
+    for (let nutrient in trackedNutrients) {
       parsedNewNutrientTargets.push({
         _trackedNutrient: trackedNutrients[nutrient].id,
-        amount: newNutrientTargets[nutrient],
+        amount: nutrients[nutrient] || 0,
       });
     }
 

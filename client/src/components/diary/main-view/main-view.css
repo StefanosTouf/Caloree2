@@ -1,0 +1,100 @@
+#main-view>.row {
+    min-height: 50rem;
+    margin-bottom: 1rem;
+}
+
+#main-view>.column {
+    height: 100%;
+}
+
+#main-view .side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    min-height: 50rem;
+}
+
+#main-view .side>div{
+    padding-bottom: 1rem;
+}
+
+#main-view .calendar-wrapper .react-calendar {
+    border: 1px solid #d4d4d5;
+    border-radius: 5px;
+}
+
+.calendar-wrapper .calendar-buttons{
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem;
+}
+
+#todays-diary {
+    min-height: 46rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#diary-header {
+    min-height: 4rem;
+}
+
+#diary-header .ui.grid {
+    align-items: center;
+}
+
+#general-info .button-wrapper {
+    margin-top: 1rem;
+}
+
+#general-info .ui.header {
+    border-bottom: 1px solid rgb(206, 206, 206);
+}
+
+#todays-diary .grid .row {
+    padding: 0.25rem;
+}
+
+#todays-diary .meal-header {
+    min-height: 2rem;
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+#todays-diary .meal-header .icon.button {
+    min-height: 2rem;
+}
+
+#todays-diary .accordion>.title>.buttons {
+    background-color: red;
+}
+
+#todays-diary .ui.segments .ui.segment {
+    padding: 0
+}
+
+#todays-diary .ui.segments .ui.segment .meal-header {
+    padding-left: 1em;
+    background-color: rgb(240, 240, 240);
+}
+
+#todays-diary .ui.segments .ui.segment .meal-header .ui.icon.button {
+    padding: 0.4em;
+    border-radius: 0;
+}
+
+#todays-diary .ui.segments .ui.segment .meal {
+    padding: 0.5em 1em 0.5em 1em;
+    margin: 0;
+}
+
+.reset-log-view{
+    text-align: center;
+}
+
+@media only screen and (max-width: 991px) {
+    .ui.grid.grid.grid>.row>[class*="computer only"].column:not(.tablet), .ui.grid.grid.grid>[class*="computer only"].column:not(.tablet), .ui.grid.grid.grid>[class*="computer only"].row:not(.tablet), .ui[class*="computer only"].grid.grid.grid:not(.tablet) {
+        display: none!important;
+    }
+}
