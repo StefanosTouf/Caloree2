@@ -51,97 +51,36 @@ import configNutrients from '../other/configNutrients';
 import history from '../history';
 
 export const fetchLog = (date, getState) => async (dispatch) => {
-  //const userId = getState().auth;
   const response = await logs.get('', {
     params: {
       date: date,
     },
   });
 
-  dispatch({
-    type: FETCH_LOG,
-    payload: response.data[0],
-  });
-};
-
-export const updateLog = () => async (dispatch, getState) => {
-  const { date } = getState();
-
-  const mealsResponse = await meals.get('', {
-    params: {
-      userId: 123412312,
-      date: date,
-    },
-  });
-
-  const logResponse = await logs.get('/logs', {
-    params: {
-      userId: 123412312,
-      date: date,
-    },
-  });
-
-  let startingNutrients = { ...trackedNutrients };
-
-  for (let meal of mealsResponse.data) {
-    const loggedFoods = await foods.get('', {
-      params: {
-        mealId: meal.id,
-      },
-    });
-
-    for (let food of loggedFoods.data) {
-      for (let nutrient of food.foodNutrients) {
-        if (startingNutrients[nutrient.name]) {
-          startingNutrients = {
-            ...startingNutrients,
-            [nutrient.name]: {
-              name: nutrient.name,
-              number: nutrient.number,
-              amount: startingNutrients[nutrient.name].amount + nutrient.amount,
-              unitName: nutrient.unitName,
-            },
-          };
-        }
+  if (response.data.targetsAchieved) {
+    const flattenedTargets = response.data.targetsAchieved.map(
+      ({ _trackedNutrient, ...others }) => {
+        return { ..._trackedNutrient, ...others };
       }
-    }
+    );
+    dispatch({
+      type: FETCH_LOG,
+      payload: { ...response.data, targetsAchieved: flattenedTargets },
+    });
+  } else {
+    dispatch({
+      type: FETCH_LOG,
+      payload: {},
+    });
   }
-
-  const newTargets = logResponse.data[0].targetsAchieved.map((targ) => {
-    if (startingNutrients[targ.name]) {
-      return { ...targ, ['amount']: startingNutrients[targ.name].amount };
-    }
-    return { ...targ };
-  });
-
-  const updatedLog = {
-    id: logResponse.data.id,
-    userId: 123412312,
-    date,
-    targetsAchieved: configNutrients(newTargets),
-  };
-
-  const response = await logs.put(
-    `/logs/${logResponse.data[0].id}`,
-    updatedLog
-  );
-
-  dispatch({
-    type: UPDATE_LOG,
-    payload: response.data,
-  });
 };
 
 export const addLog = (date) => async (dispatch) => {
-  const userId = 123412312;
-
   const log = {
     date,
-    userId,
-    targetsAchieved: Object.values(trackedNutrients),
   };
 
-  const response = await logs.post('/logs', log);
+  const response = await logs.post('', log);
 
   dispatch({
     type: ADD_LOG,
@@ -150,11 +89,8 @@ export const addLog = (date) => async (dispatch) => {
 };
 
 export const fetchMeals = (date) => async (dispatch) => {
-  console.log('fetchMeals', date);
-  //const userId = getState().auth;
   const response = await meals.get(``, {
     params: {
-      userId: 123412312,
       date: date,
     },
   });
@@ -166,7 +102,6 @@ export const fetchMeals = (date) => async (dispatch) => {
 };
 
 export const fetchMeal = (mealId) => async (dispatch) => {
-  //const userId = getState().auth;
   const response = await meals.get(`/${mealId}`);
 
   dispatch({
@@ -176,7 +111,7 @@ export const fetchMeal = (mealId) => async (dispatch) => {
 };
 
 export const addMeal = (date, name) => async (dispatch) => {
-  const meal = { date, name, userId: 123412312 };
+  const meal = { date, name };
   const response = await meals.post('', meal);
 
   dispatch({
@@ -189,8 +124,6 @@ export const deleteMeal = (mealId) => async (dispatch) => {
   //const userId = getState().auth;
 
   await meals.delete(`/${mealId}`);
-
-  dispatch(updateLog());
 
   dispatch({
     type: DELETE_MEAL,
@@ -216,7 +149,6 @@ export const clearLoggedFoods = () => {
 };
 
 export const fetchLoggedFoods = (mealId) => async (dispatch) => {
-  //const userId = getState().auth;
   const response = await foods.get(``, {
     params: {
       mealId,
@@ -225,7 +157,7 @@ export const fetchLoggedFoods = (mealId) => async (dispatch) => {
 
   dispatch({
     type: FETCH_LOGGED_FOODS,
-    payload: response.data,
+    payload: response.data.loggedFoods,
   });
 };
 
@@ -244,9 +176,7 @@ export const addLoggedFood = (detailedFood, weight) => async (dispatch) => {
 
   const response = await foods.post('', newFood);
 
-  await dispatch(updateLog());
-
-  dispatch({
+  await dispatch({
     type: ADD_LOGGED_FOOD,
     payload: response.data,
   });
@@ -259,8 +189,6 @@ export const deleteLoggedFoods = (foodsToDelete) => async (dispatch) => {
     loggedFoodsIds.push(food.id);
   }
 
-  dispatch(updateLog());
-
   dispatch({
     type: DELETE_LOGGED_FOODS,
     payload: loggedFoodsIds,
@@ -269,8 +197,6 @@ export const deleteLoggedFoods = (foodsToDelete) => async (dispatch) => {
 
 export const deleteLoggedFood = (id) => async (dispatch) => {
   await foods.delete(`/${id}`);
-
-  dispatch(updateLog());
 
   dispatch({
     type: DELETE_LOGGED_FOOD,
@@ -352,8 +278,8 @@ export const selectFood = (fdcId) => {
 export const fetchCustomFoods = (query) => async (dispatch) => {
   const response = await customFoods.get('', {
     params: {
-      description_like: query,
-      _limit: 50,
+      query,
+      limit: 50,
     },
   });
 
@@ -365,11 +291,10 @@ export const fetchCustomFoods = (query) => async (dispatch) => {
 
 export const fetchDetailedCustomFood = (id) => async (dispatch) => {
   const response = await customFoods.get(`/${id}`);
-  const configuredNutrients = configNutrients(response.data.foodNutrients);
 
   dispatch({
     type: FETCH_DETAILED_CUSTOM_FOOD,
-    payload: { ...response.data, ['foodNutrients']: configuredNutrients },
+    payload: response.data,
   });
 };
 
@@ -431,11 +356,10 @@ export const addCustomFood = (customFood) => async (dispatch) => {
 };
 
 export const updateUserNurtientTargets = (nutrients) => async (dispatch) => {
-  const response = await users.patch(`/${123412312}`, {
+  console.log(nutrients);
+  const response = await users.patch(``, {
     generalTargets: nutrients,
   });
-
-  console.log(response);
 
   dispatch({
     type: UPDATE_USER_NUTRIENT_TARGETS,

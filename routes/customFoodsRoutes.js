@@ -32,16 +32,13 @@ module.exports = (app) => {
   app.post('/api/customFoods', requireLogin, async (req, res) => {
     const { description, nutrients } = req.body;
 
-    const trackedNutrients = _.mapKeys(
-      await TrackedNutrient.find(),
-      'shortName'
-    );
+    const trackedNutrients = _.mapKeys(await TrackedNutrient.find(), 'name');
 
     const parsedNewNutrientTargets = [];
     for (let nutrient in trackedNutrients) {
       parsedNewNutrientTargets.push({
         _trackedNutrient: trackedNutrients[nutrient].id,
-        amount: nutrients[nutrient] || 0,
+        amount: nutrients[nutrient] || 50,
       });
     }
 

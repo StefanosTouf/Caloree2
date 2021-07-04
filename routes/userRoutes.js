@@ -19,16 +19,15 @@ module.exports = (app) => {
   });
 
   app.patch('/api/user', async (req, res) => {
-    const trackedNutrients = _.mapKeys(
-      await TrackedNutrient.find(),
-      'shortName'
-    );
-    const nutrients = req.params.nutrientTargets;
+    const trackedNutrients = _.mapKeys(await TrackedNutrient.find(), 'name');
+    const nutrients = req.body.generalTargets;
+
+    console.log(req);
 
     const parsedNewNutrientTargets = [];
     for (let nutrient in trackedNutrients) {
       parsedNewNutrientTargets.push({
-        _trackedNutrient: trackedNutrients[nutrient].id,
+        _trackedNutrient: trackedNutrients[nutrient]._id,
         amount: nutrients[nutrient] || 0,
       });
     }

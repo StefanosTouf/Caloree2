@@ -10,9 +10,7 @@ import './Calendar.css';
 const CalendarWrapper = ({ setDate, date }) => {
   useEffect(() => {
     if (!date) {
-      const date = new Date();
-      const shortDate = date.toISOString().substring(0, 10);
-      setDate(shortDate);
+      setDate(new Date());
     }
   }, []);
 
@@ -22,12 +20,11 @@ const CalendarWrapper = ({ setDate, date }) => {
         className="react-calendars"
         onChange={(newDate) => {
           const correctDate = new Date(newDate.setDate(newDate.getDate() + 1));
-          const shortDate = correctDate.toISOString().substring(0, 10);
-          if (date !== shortDate) {
-            setDate(shortDate);
+          if (date !== correctDate) {
+            setDate(correctDate);
           }
         }}
-        value={date ? new Date(`${date}T00:00:00`) : new Date()}
+        value={date ? date : new Date()}
         maxDetail="month"
         minDetail="year"
       />

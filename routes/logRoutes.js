@@ -1,29 +1,37 @@
 const mongoose = require('mongoose');
 const requireLogin = require('../middlewares/requireLogin');
+const updateLog = require('../utils/updateLog');
+const getEntireDay = require('../utils/getEntireDay');
 
 const TrackedNutrient = mongoose.model('trackedNutrients');
 const Log = mongoose.model('logs');
 
 module.exports = (app) => {
   app.get('/api/logs', requireLogin, async (req, res) => {
-    console.log(req.query);
-
-    const log = await Log.findOne({
-      date: {
-        $gte: new Date(req.query.date).setHours(0, 0, 0, 0),
-        $lt: new Date(req.query.date).setHours(24, 0, 0, 0),
+    const populatedLog = await Log.findOne(
+      getEntireDay(req.query.date)
+    ).populate({
+      path: 'targetsAchieved',
+      populate: {
+        path: '_trackedNutrient',
+        model: 'trackedNutrients',
       },
     });
-    res.send(log);
+    res.send(populatedLog);
+  });
+
+  app.get('/api/testlogs', requireLogin, async (req, res) => {
+    const { date } = req.query;
+
+    res.send(await updateLog(new Date(date)));
   });
 
   app.post('/api/logs', requireLogin, async (req, res) => {
-    const existingLog = await Log.findOne({
-      date: {
-        $gte: new Date(req.query.date).setHours(0, 0, 0, 0),
-        $lt: new Date(req.query.date).setHours(24, 0, 0, 0),
-      },
-    });
+    const { date } = req.body;
+
+    console.log(req);
+
+    const existingLog = await Log.findOne(getEntireDay(date));
 
     if (existingLog) {
       res.status(403).send('Log already exists');
@@ -38,7 +46,7 @@ module.exports = (app) => {
     const log = await new Log({
       _user: req.user.id,
       targetsAchieved: targetsAchievedInit,
-      date: Date.now(),
+      date: new Date(date),
     }).save();
 
     res.send(log);
