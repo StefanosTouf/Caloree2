@@ -20,16 +20,17 @@ module.exports = (app) => {
     res.send(populatedLog);
   });
 
-  app.get('/api/testlogs', requireLogin, async (req, res) => {
+  app.get('/api/logs/updatedLog', requireLogin, async (req, res) => {
     const { date } = req.query;
 
-    res.send(await updateLog(new Date(date)));
+    console.log(req);
+    const log = await updateLog(date);
+
+    res.send(log);
   });
 
   app.post('/api/logs', requireLogin, async (req, res) => {
     const { date } = req.body;
-
-    console.log(req);
 
     const existingLog = await Log.findOne(getEntireDay(date));
 

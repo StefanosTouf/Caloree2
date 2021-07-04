@@ -43,12 +43,13 @@ import customFoods from '../apis/customFoods';
 import users from '../apis/users';
 import axios from 'axios';
 
-import _ from 'lodash';
+import _, { update } from 'lodash';
 
 import { targetsPrototype, trackedNutrients } from '../other/configs';
 import { calculateAmountOfNutrient } from '../other/nutrientCalculations';
 import configNutrients from '../other/configNutrients';
 import history from '../history';
+import { ContactSupportOutlined } from '@material-ui/icons';
 
 export const fetchLog = (date, getState) => async (dispatch) => {
   const response = await logs.get('', {
@@ -85,6 +86,24 @@ export const addLog = (date) => async (dispatch) => {
   dispatch({
     type: ADD_LOG,
     payload: response.data,
+  });
+};
+
+export const updateLog = () => async (dispatch, getState) => {
+  const { date } = getState();
+  console.log('date', date);
+
+  const response = await logs.get('/updatedLog', { params: { date } });
+
+  const flattenedTargets = response.data.targetsAchieved.map(
+    ({ _trackedNutrient, ...others }) => {
+      return { ..._trackedNutrient, ...others };
+    }
+  );
+
+  dispatch({
+    type: FETCH_LOG,
+    payload: { ...response.data, targetsAchieved: flattenedTargets },
   });
 };
 
@@ -171,10 +190,12 @@ export const addLoggedFood = (detailedFood, weight) => async (dispatch) => {
 
   const newFood = {
     ...detailedFood,
-    foodNutrients: configNutrients(newFoodNutrients),
+    foodNutrients: newFoodNutrients,
   };
 
   const response = await foods.post('', newFood);
+
+  dispatch(updateLog());
 
   await dispatch({
     type: ADD_LOGGED_FOOD,

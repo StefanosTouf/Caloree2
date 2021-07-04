@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const requireLogin = require('../middlewares/requireLogin');
 const updateLog = require('../utils/updateLog');
+const _ = require('lodash');
 
 const LoggedFood = mongoose.model('loggedFoods');
 const Meal = mongoose.model('meals');
@@ -8,18 +9,22 @@ const TrackedNutrient = mongoose.model('trackedNutrients');
 
 module.exports = (app) => {
   app.post('/api/loggedFoods', requireLogin, async (req, res) => {
-    const { fdcId, description, mealId, amount, unitName } = req.body;
+    const { fdcId, description, mealId, amount, unitName, foodNutrients } =
+      req.body;
 
-    const trackedNutrients = await TrackedNutrient.find();
+    const trackedNutrients = _.mapKeys(await TrackedNutrient.find(), 'name');
 
-    const foodNutrients = trackedNutrients.map((nutrient) => {
-      return { _trackedNutrient: nutrient.id, amount: 100 };
+    const formatedFoodNutrients = foodNutrients.map((nutrient) => {
+      return {
+        _trackedNutrient: trackedNutrients[nutrient.name]._id,
+        amount: nutrient.amount,
+      };
     });
 
     const loggedFood = await new LoggedFood({
       fdcId,
       description,
-      foodNutrients,
+      foodNutrients: formatedFoodNutrients,
       _meal: mealId,
       amount,
       unitName,
@@ -41,10 +46,6 @@ module.exports = (app) => {
     const { id } = req.params;
 
     const deletionInfo = await LoggedFood.findByIdAndDelete(id);
-
-    updateLog(new Date());
-
-    console.log(deletionInfo);
 
     res.send(deletionInfo);
   });

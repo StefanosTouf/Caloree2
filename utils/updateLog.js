@@ -8,7 +8,7 @@ const Meal = mongoose.model('meals');
 const Log = mongoose.model('logs');
 
 const updateLog = async (date) => {
-  const meals = await Meal.find(getEntireDay(date));
+  const meals = await Meal.find(getEntireDay(new Date(date)));
 
   const mealsIDs = meals.map((meal) => new ObjectId(meal.id));
 
@@ -42,12 +42,18 @@ const updateLog = async (date) => {
   ]);
 
   const log = await Log.findOneAndUpdate(
-    getEntireDay(date),
+    getEntireDay(new Date(date)),
     {
       targetsAchieved: summedNutrients,
     },
     { new: true }
-  );
+  ).populate({
+    path: 'targetsAchieved',
+    populate: {
+      path: '_trackedNutrient',
+      model: 'trackedNutrients',
+    },
+  });
 
   return log;
 };

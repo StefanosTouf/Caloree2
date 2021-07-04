@@ -22,8 +22,6 @@ module.exports = (app) => {
     const trackedNutrients = _.mapKeys(await TrackedNutrient.find(), 'name');
     const nutrients = req.body.generalTargets;
 
-    console.log(req);
-
     const parsedNewNutrientTargets = [];
     for (let nutrient in trackedNutrients) {
       parsedNewNutrientTargets.push({
