@@ -4,11 +4,11 @@ import _ from 'lodash';
 export default (state = {}, action) => {
   switch (action.type) {
     case FETCH_LOG:
-      return { ..._.omit(action.payload, 'targetsAchieved') };
+      return { ...action.payload };
     case UPDATE_LOG:
-      return { ..._.omit(action.payload, 'targetsAchieved') };
+      return { ...action.payload };
     case ADD_LOG:
-      return { ..._.omit(action.payload, 'targetsAchieved') };
+      return { ...action.payload };
     default:
       return state;
   }

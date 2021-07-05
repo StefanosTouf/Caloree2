@@ -22,8 +22,6 @@ module.exports = (app) => {
 
   app.get('/api/logs/updatedLog', requireLogin, async (req, res) => {
     const { date } = req.query;
-
-    console.log(req);
     const log = await updateLog(date);
 
     res.send(log);
@@ -44,12 +42,24 @@ module.exports = (app) => {
       return { _trackedNutrient: nutrient.id };
     });
 
-    const log = await new Log({
+    new Log({
       _user: req.user.id,
       targetsAchieved: targetsAchievedInit,
       date: new Date(date),
-    }).save();
+    })
+      .save()
+      .then(async (doc) => {
+        const populatedLog = await doc
+          .populate({
+            path: 'targetsAchieved',
+            populate: {
+              path: '_trackedNutrient',
+              model: 'trackedNutrients',
+            },
+          })
+          .execPopulate();
 
-    res.send(log);
+        res.send(populatedLog);
+      });
   });
 };

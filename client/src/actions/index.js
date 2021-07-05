@@ -33,6 +33,7 @@ import {
   SET_SEARCH_QUERY,
   DELETE_CUSTOM_FOOD,
   FETCH_USER_INF,
+  RESET_SELECT_LOGGED_FOOD,
 } from './types';
 
 import logs from '../apis/logs';
@@ -49,7 +50,7 @@ import { targetsPrototype, trackedNutrients } from '../other/configs';
 import { calculateAmountOfNutrient } from '../other/nutrientCalculations';
 import configNutrients from '../other/configNutrients';
 import history from '../history';
-import { ContactSupportOutlined } from '@material-ui/icons';
+import flattenObject from '../other/flattenObject';
 
 export const fetchLog = (date, getState) => async (dispatch) => {
   const response = await logs.get('', {
@@ -59,11 +60,11 @@ export const fetchLog = (date, getState) => async (dispatch) => {
   });
 
   if (response.data.targetsAchieved) {
-    const flattenedTargets = response.data.targetsAchieved.map(
-      ({ _trackedNutrient, ...others }) => {
-        return { ..._trackedNutrient, ...others };
-      }
+    const flattenedTargets = flattenObject(
+      response.data.targetsAchieved,
+      '_trackedNutrient'
     );
+
     dispatch({
       type: FETCH_LOG,
       payload: { ...response.data, targetsAchieved: flattenedTargets },
@@ -83,9 +84,16 @@ export const addLog = (date) => async (dispatch) => {
 
   const response = await logs.post('', log);
 
+  const flattenedTargets = flattenObject(
+    response.data.targetsAchieved,
+    '_trackedNutrient'
+  );
+
+  console.log(flattenedTargets);
+
   dispatch({
     type: ADD_LOG,
-    payload: response.data,
+    payload: { ...response.data, targetsAchieved: flattenedTargets },
   });
 };
 
@@ -95,10 +103,9 @@ export const updateLog = () => async (dispatch, getState) => {
 
   const response = await logs.get('/updatedLog', { params: { date } });
 
-  const flattenedTargets = response.data.targetsAchieved.map(
-    ({ _trackedNutrient, ...others }) => {
-      return { ..._trackedNutrient, ...others };
-    }
+  const flattenedTargets = flattenObject(
+    response.data.targetsAchieved,
+    '_trackedNutrient'
   );
 
   dispatch({
@@ -140,9 +147,9 @@ export const addMeal = (date, name) => async (dispatch) => {
 };
 
 export const deleteMeal = (mealId) => async (dispatch) => {
-  //const userId = getState().auth;
-
   await meals.delete(`/${mealId}`);
+
+  dispatch(updateLog());
 
   dispatch({
     type: DELETE_MEAL,
@@ -151,8 +158,6 @@ export const deleteMeal = (mealId) => async (dispatch) => {
 };
 
 export const editMealName = (mealId, name) => async (dispatch) => {
-  //const userId = getState().auth;
-
   const response = await meals.patch(`/${mealId}`, { name });
 
   dispatch({
@@ -174,9 +179,16 @@ export const fetchLoggedFoods = (mealId) => async (dispatch) => {
     },
   });
 
+  const flattenedLoggedFoods = response.data.loggedFoods.map((food) => {
+    return {
+      ...food,
+      foodNutrients: flattenObject(food.foodNutrients, '_trackedNutrient'),
+    };
+  });
+
   dispatch({
     type: FETCH_LOGGED_FOODS,
-    payload: response.data.loggedFoods,
+    payload: flattenedLoggedFoods,
   });
 };
 
@@ -195,11 +207,16 @@ export const addLoggedFood = (detailedFood, weight) => async (dispatch) => {
 
   const response = await foods.post('', newFood);
 
+  const flattenedNutrients = flattenObject(
+    response.data.foodNutrients,
+    '_trackedNutrient'
+  );
+
   dispatch(updateLog());
 
   await dispatch({
     type: ADD_LOGGED_FOOD,
-    payload: response.data,
+    payload: { ...response.data, foodNutrients: flattenedNutrients },
   });
 };
 
@@ -218,6 +235,8 @@ export const deleteLoggedFoods = (foodsToDelete) => async (dispatch) => {
 
 export const deleteLoggedFood = (id) => async (dispatch) => {
   await foods.delete(`/${id}`);
+
+  dispatch(updateLog());
 
   dispatch({
     type: DELETE_LOGGED_FOOD,
@@ -366,6 +385,13 @@ export const selectLoggedFood = (loggedFood) => {
   };
 };
 
+export const resetSelectLoggedFood = (log) => {
+  return {
+    type: RESET_SELECT_LOGGED_FOOD,
+    payload: log,
+  };
+};
+
 export const addCustomFood = (customFood) => async (dispatch) => {
   const response = await customFoods.post('', customFood);
 
@@ -400,10 +426,9 @@ export const setSearchQuery = (query) => {
 export const fetchUser = () => async (dispatch) => {
   const response = await axios.get('/api/user');
 
-  const flattenedTargets = response.data.generalTargets.map(
-    ({ _trackedNutrient, ...others }) => {
-      return { ..._trackedNutrient, ...others };
-    }
+  const flattenedTargets = flattenObject(
+    response.data.generalTargets,
+    '_trackedNutrient'
   );
 
   dispatch({

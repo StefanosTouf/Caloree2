@@ -44,7 +44,7 @@ const updateLog = async (date) => {
   const log = await Log.findOneAndUpdate(
     getEntireDay(new Date(date)),
     {
-      targetsAchieved: summedNutrients,
+      targetsAchieved: summedNutrients || targetsAchievedInit,
     },
     { new: true }
   ).populate({

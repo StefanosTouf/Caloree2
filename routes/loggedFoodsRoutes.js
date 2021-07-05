@@ -21,23 +21,39 @@ module.exports = (app) => {
       };
     });
 
-    const loggedFood = await new LoggedFood({
+    new LoggedFood({
       fdcId,
       description,
       foodNutrients: formatedFoodNutrients,
       _meal: mealId,
       amount,
       unitName,
-    }).save();
+    })
+      .save()
+      .then(async (doc) => {
+        const populatedLoggedFood = await doc
+          .populate({
+            path: 'foodNutrients',
+            populate: {
+              path: '_trackedNutrient',
+              model: 'trackedNutrients',
+            },
+          })
+          .execPopulate();
 
-    res.send(loggedFood);
+        res.send(populatedLoggedFood);
+      });
   });
 
   app.get('/api/loggedFoods', requireLogin, async (req, res) => {
     const { mealId } = req.query;
 
-    const loggedFoods = await LoggedFood.find({ _meal: mealId }).select({
-      foodNutrients: false,
+    const loggedFoods = await LoggedFood.find({ _meal: mealId }).populate({
+      path: 'foodNutrients',
+      populate: {
+        path: '_trackedNutrient',
+        model: 'trackedNutrients',
+      },
     });
     res.send({ loggedFoods });
   });
@@ -45,8 +61,8 @@ module.exports = (app) => {
   app.delete('/api/loggedFoods/:id', requireLogin, async (req, res) => {
     const { id } = req.params;
 
-    const deletionInfo = await LoggedFood.findByIdAndDelete(id);
+    const deletedFood = await LoggedFood.findByIdAndDelete(id);
 
-    res.send(deletionInfo);
+    res.send(deletedFood);
   });
 };

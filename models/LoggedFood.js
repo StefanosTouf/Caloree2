@@ -10,6 +10,7 @@ const loggedFoodSchema = new Schema({
   _meal: { type: Schema.Types.ObjectId, ref: 'Meal' },
   amount: Number,
   unitName: String,
+  date: Date,
 });
 
 mongoose.model('loggedFoods', loggedFoodSchema);

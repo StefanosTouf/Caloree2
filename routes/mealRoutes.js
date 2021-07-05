@@ -45,7 +45,6 @@ module.exports = (app) => {
   app.delete('/api/meals/:id', requireLogin, async (req, res) => {
     const meal = await Meal.findByIdAndDelete(req.params.id);
     await LoggedFood.deleteMany({ _meal: req.params.id });
-    await updateLog(meal.date);
     res.send({ meal });
   });
 };

@@ -3,28 +3,27 @@ import _ from 'lodash';
 
 import { connect } from 'react-redux';
 
-import { fetchLog, fetchUser } from '../../../actions/index'
+import { resetSelectLoggedFood } from '../../../actions/index';
 
+const GeneralInfo = ({ resetSelectLoggedFood, log }) => {
+  return (
+    <div className="button-wrapper reset-log-view">
+      <button
+        className="ui primary button"
+        onClick={() => {
+          resetSelectLoggedFood(log);
+        }}
+      >
+        Reset View
+      </button>
+    </div>
+  );
+};
 
-const GeneralInfo = ({ fetchLog, date}) => {
+const mapStateToProps = (state) => {
+  return {
+    log: state.log,
+  };
+};
 
-    return (
-
-        <div className="button-wrapper reset-log-view" >
-            <button
-                className="ui primary button"
-                onClick={() => {
-                    fetchLog(date)
-                }}
-            >
-                Reset View
-            </button>
-        </div>
-    )
-}
-
-
-export default connect(
-    null,
-    { fetchLog, fetchUser }
-)(GeneralInfo);
+export default connect(mapStateToProps, { resetSelectLoggedFood })(GeneralInfo);

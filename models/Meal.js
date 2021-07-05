@@ -7,9 +7,4 @@ const mealSchema = new Schema({
   name: String,
 });
 
-mealSchema.pre('remove', (next) => {
-  console.log('in remove middleware');
-  next();
-});
-
 mongoose.model('meals', mealSchema);
