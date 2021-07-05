@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const mealSchema = new Schema({
   _user: { type: Schema.Types.ObjectId, ref: 'User' },
-  date: Date,
+  _log: { type: Schema.Types.ObjectId, ref: 'Log' },
   name: String,
 });
 

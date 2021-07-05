@@ -7,11 +7,11 @@ const LoggedFood = mongoose.model('loggedFoods');
 
 module.exports = (app) => {
   app.post('/api/meals', requireLogin, async (req, res) => {
-    const { date, name } = req.body;
+    const { logId, name } = req.body;
 
     const meal = await new Meal({
       _user: req.user.id,
-      date,
+      _log: logId,
       name,
     }).save();
 
@@ -19,12 +19,8 @@ module.exports = (app) => {
   });
 
   app.get('/api/meals', requireLogin, async (req, res) => {
-    const meals = await Meal.find({
-      date: {
-        $gte: new Date(req.query.date).setHours(0, 0, 0, 0),
-        $lt: new Date(req.query.date).setHours(24, 0, 0, 0),
-      },
-    });
+    const { logId } = req.query;
+    const meals = await Meal.find({ _log: logId });
     res.send(meals);
   });
 

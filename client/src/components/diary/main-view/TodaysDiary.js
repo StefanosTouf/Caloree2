@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchMeals, addMeal, addLog } from '../../../actions';
+import {
+  fetchMeals,
+  addMeal,
+  addLog,
+  addLogAndAppendMeal,
+} from '../../../actions';
 
 import Accordion from '../../generalComponents/Accordion';
 import Meal from './Meal';
 import MealHeader from './MealHeader';
 
-const TodaysDiary = ({ meals, fetchMeals, date, addMeal, log, addLog }) => {
+const TodaysDiary = ({
+  meals,
+  fetchMeals,
+  date,
+  addMeal,
+  log,
+  addLogAndAppendMeal,
+}) => {
   useEffect(() => {
-    if (date) {
-      fetchMeals(date);
+    if (log) {
+      fetchMeals(log._id);
     }
-  }, [date]);
+  }, [log]);
 
   const accordionItem = (meal) => {
     return (
@@ -31,10 +43,11 @@ const TodaysDiary = ({ meals, fetchMeals, date, addMeal, log, addLog }) => {
 
   const handleAddMeal = () => {
     if (!log._id) {
-      addLog(date);
+      addLogAndAppendMeal(date, 'New Meal');
+      return;
     }
 
-    addMeal(date, 'New Meal');
+    addMeal(log._id, 'New Meal');
   };
 
   return (
@@ -66,6 +79,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { fetchMeals, addMeal, addLog })(
-  TodaysDiary
-);
+export default connect(mapStateToProps, {
+  fetchMeals,
+  addMeal,
+  addLogAndAppendMeal,
+})(TodaysDiary);

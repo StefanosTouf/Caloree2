@@ -97,6 +97,28 @@ export const addLog = (date) => async (dispatch) => {
   });
 };
 
+export const addLogAndAppendMeal = (date, name) => async (dispatch) => {
+  const log = await logs.post('', { date });
+  const logId = log.data._id;
+
+  const meal = await meals.post('', { logId, name });
+
+  const flattenedTargets = flattenObject(
+    log.data.targetsAchieved,
+    '_trackedNutrient'
+  );
+
+  dispatch({
+    type: ADD_LOG,
+    payload: { ...log.data, targetsAchieved: flattenedTargets },
+  });
+
+  dispatch({
+    type: ADD_MEAL,
+    payload: meal.data,
+  });
+};
+
 export const updateLog = () => async (dispatch, getState) => {
   const { date } = getState();
   console.log('date', date);
@@ -114,10 +136,10 @@ export const updateLog = () => async (dispatch, getState) => {
   });
 };
 
-export const fetchMeals = (date) => async (dispatch) => {
+export const fetchMeals = (logId) => async (dispatch) => {
   const response = await meals.get(``, {
     params: {
-      date: date,
+      logId,
     },
   });
 
@@ -136,8 +158,8 @@ export const fetchMeal = (mealId) => async (dispatch) => {
   });
 };
 
-export const addMeal = (date, name) => async (dispatch) => {
-  const meal = { date, name };
+export const addMeal = (logId, name) => async (dispatch) => {
+  const meal = { logId, name };
   const response = await meals.post('', meal);
 
   dispatch({
@@ -149,7 +171,7 @@ export const addMeal = (date, name) => async (dispatch) => {
 export const deleteMeal = (mealId) => async (dispatch) => {
   await meals.delete(`/${mealId}`);
 
-  dispatch(updateLog());
+  //dispatch(updateLog());
 
   dispatch({
     type: DELETE_MEAL,
@@ -212,7 +234,7 @@ export const addLoggedFood = (detailedFood, weight) => async (dispatch) => {
     '_trackedNutrient'
   );
 
-  dispatch(updateLog());
+  //dispatch(updateLog());
 
   await dispatch({
     type: ADD_LOGGED_FOOD,
@@ -236,7 +258,7 @@ export const deleteLoggedFoods = (foodsToDelete) => async (dispatch) => {
 export const deleteLoggedFood = (id) => async (dispatch) => {
   await foods.delete(`/${id}`);
 
-  dispatch(updateLog());
+  //dispatch(updateLog());
 
   dispatch({
     type: DELETE_LOGGED_FOOD,
