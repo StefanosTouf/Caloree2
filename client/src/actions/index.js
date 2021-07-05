@@ -50,7 +50,7 @@ import { targetsPrototype, trackedNutrients } from '../other/configs';
 import { calculateAmountOfNutrient } from '../other/nutrientCalculations';
 import configNutrients from '../other/configNutrients';
 import history from '../history';
-import flattenObject from '../other/flattenObject';
+import flattenObjectArray from '../other/flattenObjectArray';
 
 export const fetchLog = (date, getState) => async (dispatch) => {
   const response = await logs.get('', {
@@ -60,7 +60,7 @@ export const fetchLog = (date, getState) => async (dispatch) => {
   });
 
   if (response.data.targetsAchieved) {
-    const flattenedTargets = flattenObject(
+    const flattenedTargets = flattenObjectArray(
       response.data.targetsAchieved,
       '_trackedNutrient'
     );
@@ -84,7 +84,7 @@ export const addLog = (date) => async (dispatch) => {
 
   const response = await logs.post('', log);
 
-  const flattenedTargets = flattenObject(
+  const flattenedTargets = flattenObjectArray(
     response.data.targetsAchieved,
     '_trackedNutrient'
   );
@@ -103,7 +103,7 @@ export const addLogAndAppendMeal = (date, name) => async (dispatch) => {
 
   const meal = await meals.post('', { logId, name });
 
-  const flattenedTargets = flattenObject(
+  const flattenedTargets = flattenObjectArray(
     log.data.targetsAchieved,
     '_trackedNutrient'
   );
@@ -125,7 +125,7 @@ export const updateLog = () => async (dispatch, getState) => {
 
   const response = await logs.get('/updatedLog', { params: { date } });
 
-  const flattenedTargets = flattenObject(
+  const flattenedTargets = flattenObjectArray(
     response.data.targetsAchieved,
     '_trackedNutrient'
   );
@@ -204,7 +204,7 @@ export const fetchLoggedFoods = (mealId) => async (dispatch) => {
   const flattenedLoggedFoods = response.data.loggedFoods.map((food) => {
     return {
       ...food,
-      foodNutrients: flattenObject(food.foodNutrients, '_trackedNutrient'),
+      foodNutrients: flattenObjectArray(food.foodNutrients, '_trackedNutrient'),
     };
   });
 
@@ -229,7 +229,7 @@ export const addLoggedFood = (detailedFood, weight) => async (dispatch) => {
 
   const response = await foods.post('', newFood);
 
-  const flattenedNutrients = flattenObject(
+  const flattenedNutrients = flattenObjectArray(
     response.data.foodNutrients,
     '_trackedNutrient'
   );
@@ -448,7 +448,7 @@ export const setSearchQuery = (query) => {
 export const fetchUser = () => async (dispatch) => {
   const response = await axios.get('/api/user');
 
-  const flattenedTargets = flattenObject(
+  const flattenedTargets = flattenObjectArray(
     response.data.generalTargets,
     '_trackedNutrient'
   );
