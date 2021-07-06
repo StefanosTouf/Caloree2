@@ -11,6 +11,7 @@ const loggedFoodSchema = new Schema({
   amount: Number,
   unitName: String,
   date: Date,
+  _user: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 
 mongoose.model('loggedFoods', loggedFoodSchema);

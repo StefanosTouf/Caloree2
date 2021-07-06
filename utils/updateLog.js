@@ -1,16 +1,25 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
-
-const getEntireDay = require('../utils/getEntireDay');
+const _ = require('lodash');
 
 const LoggedFood = mongoose.model('loggedFoods');
 const Meal = mongoose.model('meals');
 const Log = mongoose.model('logs');
+const TrackedNutrient = mongoose.model('trackedNutrients');
 
-const updateLog = async (date) => {
-  const meals = await Meal.find(getEntireDay(new Date(date)));
+const updateLog = async (logId) => {
+  const meals = await Meal.find({ _log: logId });
 
   const mealsIDs = meals.map((meal) => new ObjectId(meal.id));
+
+  const initNutrients = (
+    await TrackedNutrient.find().select({ _id: true })
+  ).map(({ _id }) => {
+    return {
+      _trackedNutrient: _id,
+      amount: 0,
+    };
+  });
 
   const summedNutrients = await LoggedFood.aggregate([
     {
@@ -41,10 +50,26 @@ const updateLog = async (date) => {
     },
   ]);
 
-  const log = await Log.findOneAndUpdate(
-    getEntireDay(new Date(date)),
+  const mapKeySummedNutrients = _.mapKeys(summedNutrients, '_trackedNutrient');
+
+  const completeSummedNutrients = initNutrients.map(
+    ({ _trackedNutrient, amount }) => {
+      return {
+        _trackedNutrient,
+        amount:
+          (mapKeySummedNutrients[_trackedNutrient]
+            ? mapKeySummedNutrients[_trackedNutrient].amount
+            : 0) + amount,
+      };
+    }
+  );
+
+  console.log('aaaa', completeSummedNutrients, summedNutrients);
+
+  const log = await Log.findByIdAndUpdate(
+    logId,
     {
-      targetsAchieved: summedNutrients || targetsAchievedInit,
+      targetsAchieved: completeSummedNutrients,
     },
     { new: true }
   ).populate({

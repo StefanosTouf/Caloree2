@@ -15,7 +15,7 @@ const UsdaFoodList = ({
   fetchCustomFoods,
   fetchedFoods,
   fetchCustomFoodsNextPage,
-  mealId,
+  meal,
   selectCustomFood,
   fetchDetailedCustomFood,
 }) => {
@@ -27,7 +27,7 @@ const UsdaFoodList = ({
         fetchFoodsNextPage={fetchCustomFoodsNextPage}
         selectFood={selectCustomFood}
         fetchDetailedFood={fetchDetailedCustomFood}
-        mealId={mealId}
+        meal={meal}
       />
     </>
   );

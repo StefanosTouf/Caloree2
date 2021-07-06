@@ -10,7 +10,7 @@ import {
 import FoodsModal from './FoodsModal';
 
 const Meal = ({
-  mealId,
+  meal,
   fetchLoggedFoods,
   loggedFoods,
   deleteLoggedFoods,
@@ -19,10 +19,9 @@ const Meal = ({
 }) => {
   useEffect(() => {
     if (Object.values(loggedFoods).length < 1) {
-      fetchLoggedFoods(mealId);
-      console.log('fetched', loggedFoods, mealId);
+      fetchLoggedFoods(meal._id);
     }
-  }, [mealId]);
+  }, [meal]);
 
   const renderFoods = () => {
     return Object.values(loggedFoods).map(
@@ -39,7 +38,7 @@ const Meal = ({
               <button
                 className="ui icon negative button delete"
                 style={{ padding: '0.35rem', position: 'absolute', right: '0' }}
-                onClick={() => deleteLoggedFood(_id)}
+                onClick={() => deleteLoggedFood(_id, meal)}
               >
                 {' '}
                 <i className="trash icon" />
@@ -62,7 +61,7 @@ const mapStateToProps = (state, ownProps) => {
   let loggedFoodsObj = {};
 
   for (let food of Object.keys(state.loggedFoods)) {
-    if (state.loggedFoods[food]._meal === ownProps.mealId) {
+    if (state.loggedFoods[food]._meal === ownProps.meal._id) {
       loggedFoodsObj = { ...loggedFoodsObj, [food]: state.loggedFoods[food] };
     }
   }

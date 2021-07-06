@@ -3,8 +3,7 @@ import React from 'react';
 const LandingPage = () => {
   return (
     <div id="landing-page">
-      <h2 class="ui center aligned icon header">
-        <i class="meh outline icon"></i>
+      <h2 class="ui center aligned header">
         <div class="content">
           Caloree
           <div class="sub header">

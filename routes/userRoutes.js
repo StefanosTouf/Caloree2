@@ -7,7 +7,7 @@ const TrackedNutrient = mongoose.model('trackedNutrients');
 
 module.exports = (app) => {
   app.get('/api/user', async (req, res) => {
-    const populatedUser = await User.findById(req.user.id).populate({
+    const populatedUser = await User.findById(req.user._id).populate({
       path: 'generalTargets',
       populate: {
         path: '_trackedNutrient',
@@ -32,6 +32,17 @@ module.exports = (app) => {
 
     req.user.generalTargets = parsedNewNutrientTargets;
     const user = await req.user.save();
-    res.send(user);
+
+    const populatedUser = await user
+      .populate({
+        path: 'generalTargets',
+        populate: {
+          path: '_trackedNutrient',
+          model: 'trackedNutrients',
+        },
+      })
+      .execPopulate();
+
+    res.send(populatedUser);
   });
 };

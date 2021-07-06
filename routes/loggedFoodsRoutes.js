@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
 const requireLogin = require('../middlewares/requireLogin');
-const updateLog = require('../utils/updateLog');
 const _ = require('lodash');
 
 const LoggedFood = mongoose.model('loggedFoods');
-const Meal = mongoose.model('meals');
 const TrackedNutrient = mongoose.model('trackedNutrients');
 
 module.exports = (app) => {
@@ -28,6 +26,7 @@ module.exports = (app) => {
       _meal: mealId,
       amount,
       unitName,
+      _user: req.user._id,
     })
       .save()
       .then(async (doc) => {

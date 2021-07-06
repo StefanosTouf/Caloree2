@@ -9,13 +9,23 @@ import Settings from './settings';
 import LandingPage from './LandingPage';
 import Header from './Header';
 
+import PrivateRoute from './PrivateRoute';
+
 import history from '../history';
 
 import './general.css';
 import { fetchUser } from '../actions';
 
-const App = ({ fetchUser }) => {
-  useEffect(fetchUser, []);
+const App = ({ fetchUser, auth }) => {
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    if (auth.googleId) {
+      history.push('/diary');
+    }
+  }, [auth]);
 
   return (
     <div id="app">
@@ -24,10 +34,14 @@ const App = ({ fetchUser }) => {
         <div className="ui container">
           <Switch>
             <Route path="/" exact component={LandingPage} />
-            <Route path="/diary" exact component={Diary} />
-            <Route path="/foods" exact component={Foods} />
-            <Route path="/foods/add-food" exact component={AddCustomFood} />
-            <Route path="/settings" exact component={Settings} />
+            <PrivateRoute path="/diary" exact component={Diary} />
+            <PrivateRoute path="/foods" exact component={Foods} />
+            <PrivateRoute
+              path="/foods/add-food"
+              exact
+              component={AddCustomFood}
+            />
+            <PrivateRoute path="/settings" exact component={Settings} />
           </Switch>
         </div>
       </Router>
@@ -35,4 +49,10 @@ const App = ({ fetchUser }) => {
   );
 };
 
-export default connect(null, { fetchUser })(App);
+const mapStateToProps = (state) => {
+  return {
+    auth: state.auth,
+  };
+};
+
+export default connect(mapStateToProps, { fetchUser })(App);

@@ -8,9 +8,14 @@ const Log = mongoose.model('logs');
 
 module.exports = (app) => {
   app.get('/api/logs', requireLogin, async (req, res) => {
-    const populatedLog = await Log.findOne(
-      getEntireDay(req.query.date)
-    ).populate({
+    const { date } = req.query;
+    const populatedLog = await Log.findOne({
+      date: {
+        $gt: new Date(date).setHours(0, 0, 0, 0),
+        $lt: new Date(date).setHours(24, 0, 0, 0),
+      },
+      _user: req.user._id,
+    }).populate({
       path: 'targetsAchieved',
       populate: {
         path: '_trackedNutrient',
@@ -20,9 +25,9 @@ module.exports = (app) => {
     res.send(populatedLog);
   });
 
-  app.get('/api/logs/updatedLog', requireLogin, async (req, res) => {
-    const { date } = req.query;
-    const log = await updateLog(date);
+  app.get('/api/logs/updatedLog/:id', requireLogin, async (req, res) => {
+    const { id } = req.params;
+    const log = await updateLog(id);
 
     res.send(log);
   });

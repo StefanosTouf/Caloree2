@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const requireLogin = require('../middlewares/requireLogin');
 const _ = require('lodash');
-const { ContactsOutlined } = require('@material-ui/icons');
 
 const CustomFood = mongoose.model('customFoods');
 const TrackedNutrient = mongoose.model('trackedNutrients');
@@ -15,6 +14,7 @@ module.exports = (app) => {
     const customFoods = await CustomFood.find(
       {
         description: { $regex: '.*' + query + '.*', $options: 'i' },
+        _user: req.user._id,
       },
       { foodNutrients: false }
     ).limit(limit);
@@ -24,7 +24,7 @@ module.exports = (app) => {
 
   app.get('/api/customFoods/:id', requireLogin, async (req, res) => {
     const { id } = req.params;
-    const customFood = await CustomFood.findById(id);
+    const customFood = await CustomFood.find({ _id: id, _user: req.user._id });
 
     res.send(customFood);
   });
@@ -45,6 +45,7 @@ module.exports = (app) => {
     const customFood = await new CustomFood({
       description,
       foodNutrients: parsedNewNutrientTargets,
+      _user: req.user._id,
     }).save();
 
     res.send(customFood);

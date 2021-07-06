@@ -44,9 +44,8 @@ import customFoods from '../apis/customFoods';
 import users from '../apis/users';
 import axios from 'axios';
 
-import _, { update } from 'lodash';
+import _ from 'lodash';
 
-import { targetsPrototype, trackedNutrients } from '../other/configs';
 import { calculateAmountOfNutrient } from '../other/nutrientCalculations';
 import configNutrients from '../other/configNutrients';
 import history from '../history';
@@ -119,11 +118,8 @@ export const addLogAndAppendMeal = (date, name) => async (dispatch) => {
   });
 };
 
-export const updateLog = () => async (dispatch, getState) => {
-  const { date } = getState();
-  console.log('date', date);
-
-  const response = await logs.get('/updatedLog', { params: { date } });
+export const updateLog = (logId) => async (dispatch, getState) => {
+  const response = await logs.get(`/updatedLog/${logId}`);
 
   const flattenedTargets = flattenObjectArray(
     response.data.targetsAchieved,
@@ -168,14 +164,15 @@ export const addMeal = (logId, name) => async (dispatch) => {
   });
 };
 
-export const deleteMeal = (mealId) => async (dispatch) => {
-  await meals.delete(`/${mealId}`);
+export const deleteMeal = (meal) => async (dispatch) => {
+  const { _id, _log } = meal;
+  await meals.delete(`/${_id}`);
 
-  //dispatch(updateLog());
+  dispatch(updateLog(_log));
 
   dispatch({
     type: DELETE_MEAL,
-    payload: mealId,
+    payload: _id,
   });
 };
 
@@ -215,7 +212,9 @@ export const fetchLoggedFoods = (mealId) => async (dispatch) => {
 };
 
 export const addLoggedFood = (detailedFood, weight) => async (dispatch) => {
-  const newFoodNutrients = detailedFood.foodNutrients.map((nutrient) => {
+  const { meal, foodNutrients, ...rest } = detailedFood;
+
+  const newFoodNutrients = foodNutrients.map((nutrient) => {
     return {
       ...nutrient,
       amount: calculateAmountOfNutrient(nutrient.amount || 0, weight),
@@ -223,8 +222,9 @@ export const addLoggedFood = (detailedFood, weight) => async (dispatch) => {
   });
 
   const newFood = {
-    ...detailedFood,
+    mealId: meal._id,
     foodNutrients: newFoodNutrients,
+    ...rest,
   };
 
   const response = await foods.post('', newFood);
@@ -234,7 +234,7 @@ export const addLoggedFood = (detailedFood, weight) => async (dispatch) => {
     '_trackedNutrient'
   );
 
-  //dispatch(updateLog());
+  dispatch(updateLog(meal._log));
 
   await dispatch({
     type: ADD_LOGGED_FOOD,
@@ -255,10 +255,10 @@ export const deleteLoggedFoods = (foodsToDelete) => async (dispatch) => {
   });
 };
 
-export const deleteLoggedFood = (id) => async (dispatch) => {
+export const deleteLoggedFood = (id, meal) => async (dispatch) => {
   await foods.delete(`/${id}`);
 
-  //dispatch(updateLog());
+  dispatch(updateLog(meal._log));
 
   dispatch({
     type: DELETE_LOGGED_FOOD,
@@ -292,6 +292,7 @@ export const fetchUsdaFoods = (query) => async (dispatch) => {
     },
   });
 
+  console.log('asdwd');
   dispatch({
     type: FETCH_USDA_FOODS,
     payload: response.data,
@@ -299,17 +300,11 @@ export const fetchUsdaFoods = (query) => async (dispatch) => {
 };
 
 export const fetchDetailedUsdaFood = (fdcId) => async (dispatch) => {
-  const response = await usda.get(`/food/${fdcId}`, {
-    params: {
-      format: 'abridged',
-    },
-  });
-
-  const configuredNutrients = configNutrients(response.data.foodNutrients);
+  const response = await usda.get(`/food/${fdcId}`);
 
   dispatch({
     type: FETCH_DETAILED_USDA_FOOD,
-    payload: { ...response.data, ['foodNutrients']: configuredNutrients },
+    payload: response.data,
   });
 };
 
@@ -425,17 +420,21 @@ export const addCustomFood = (customFood) => async (dispatch) => {
 };
 
 export const updateUserNurtientTargets = (nutrients) => async (dispatch) => {
-  console.log(nutrients);
   const response = await users.patch(``, {
     generalTargets: nutrients,
   });
 
+  const flattenedTargets = flattenObjectArray(
+    response.data.generalTargets,
+    '_trackedNutrient'
+  );
+
   dispatch({
     type: UPDATE_USER_NUTRIENT_TARGETS,
-    payload: response.data,
+    payload: { ...response.data, generalTargets: flattenedTargets },
   });
 
-  history.push('/');
+  history.push('/diary');
 };
 
 export const setSearchQuery = (query) => {

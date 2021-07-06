@@ -7,7 +7,7 @@ const FoodList = ({
   searchQuery,
   foods,
   fetchFoodsNextPage,
-  mealId,
+  meal,
   selectFood,
   fetchDetailedFood,
 }) => {
@@ -48,10 +48,7 @@ const FoodList = ({
           Load More
         </button>
       </div>
-      <DetailedFoodDisplay
-        mealId={mealId}
-        fetchDetailedFood={fetchDetailedFood}
-      />
+      <DetailedFoodDisplay meal={meal} fetchDetailedFood={fetchDetailedFood} />
     </>
   );
 };

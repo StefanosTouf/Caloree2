@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-import {
-  fetchMeals,
-  addMeal,
-  addLog,
-  addLogAndAppendMeal,
-} from '../../../actions';
+import { fetchMeals, addMeal, addLogAndAppendMeal } from '../../../actions';
 
-import Accordion from '../../generalComponents/Accordion';
 import Meal from './Meal';
 import MealHeader from './MealHeader';
 
@@ -24,13 +18,13 @@ const TodaysDiary = ({
     if (log) {
       fetchMeals(log._id);
     }
-  }, [log]);
+  }, [log._id]);
 
   const accordionItem = (meal) => {
     return (
-      <div className="ui segment" key={meal.id}>
+      <div className="ui segment" key={meal._id}>
         <MealHeader mealId={meal._id} />
-        <Meal mealId={meal._id} />
+        <Meal meal={meal} />
       </div>
     );
   };
@@ -55,7 +49,7 @@ const TodaysDiary = ({
       <h3 class="ui top attached header" id="diary-header">
         <div className="ui two column grid">
           <div className="ui twelve wide column">
-            <h2>Todays Diary: {`${date}`.substring(0, 10)}</h2>
+            <h2>{`${date}`.substring(0, 10)}</h2>
           </div>
           <div className="ui four wide column">
             <button className="ui button positive" onClick={handleAddMeal}>

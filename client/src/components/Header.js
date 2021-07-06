@@ -38,9 +38,12 @@ const Header = ({ auth }) => {
         Caloree
       </NavLink>
       <div className="right menu">
-        <a href="/auth/google" className="item" activeClassName="active">
-          Log In
-        </a>
+        <div className="item">
+          <a href="/auth/google" className="ui red google button">
+            <i class="google icon"></i>
+            Log In/Sign un with Google
+          </a>
+        </div>
       </div>
     </div>
   );

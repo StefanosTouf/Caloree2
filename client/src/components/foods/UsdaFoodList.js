@@ -15,7 +15,7 @@ const UsdaFoodList = ({
   fetchUsdaFoods,
   fetchedFoods,
   fetchUsdaFoodsNextPage,
-  mealId,
+  meal,
   selectFood,
   fetchDetailedUsdaFood,
 }) => {
@@ -27,7 +27,7 @@ const UsdaFoodList = ({
         fetchFoodsNextPage={fetchUsdaFoodsNextPage}
         selectFood={selectFood}
         fetchDetailedFood={fetchDetailedUsdaFood}
-        mealId={mealId}
+        meal={meal}
       />
     </>
   );

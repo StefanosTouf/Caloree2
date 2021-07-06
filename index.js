@@ -48,6 +48,7 @@ require('./routes/mealRoutes')(app);
 require('./routes/userRoutes')(app);
 require('./routes/loggedFoodsRoutes')(app);
 require('./routes/customFoodsRoutes')(app);
+require('./routes/usdaRoutes')(app);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT);

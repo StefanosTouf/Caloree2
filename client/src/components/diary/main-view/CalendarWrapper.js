@@ -19,9 +19,8 @@ const CalendarWrapper = ({ setDate, date }) => {
       <Calendar
         className="react-calendars"
         onChange={(newDate) => {
-          const correctDate = new Date(newDate.setDate(newDate.getDate() + 1));
-          if (date !== correctDate) {
-            setDate(correctDate);
+          if (date !== newDate) {
+            setDate(newDate);
           }
         }}
         value={date ? date : new Date()}
