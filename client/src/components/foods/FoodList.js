@@ -22,6 +22,7 @@ const FoodList = ({
   }, []);
 
   useRemountEffect(() => {
+    console.log('now1');
     fetchFoods(searchQuery, resultsPage);
   }, [resultsPage]);
 
@@ -32,6 +33,7 @@ const FoodList = ({
         return setResultsPage(1);
       }
       fetchFoods(searchQuery, 1);
+      console.log('now2');
     };
 
     const timeout = setTimeout(() => {

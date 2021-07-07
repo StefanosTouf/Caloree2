@@ -40,6 +40,7 @@ const DetailedFoodDisplay = ({
       ),
       calculatorValue
     );
+    clearSelection();
   };
 
   const renderHeader = () => {

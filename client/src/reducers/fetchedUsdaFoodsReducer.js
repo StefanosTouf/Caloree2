@@ -1,4 +1,8 @@
-import { FETCH_USDA_FOODS, CLEAR_USDA_FOODS } from '../actions/types';
+import {
+  FETCH_USDA_FOODS,
+  CLEAR_USDA_FOODS,
+  FETCH_USDA_FOODS_CANCEL,
+} from '../actions/types';
 import _ from 'lodash';
 
 export default (state = [], action) => {
@@ -9,6 +13,8 @@ export default (state = [], action) => {
         : _.concat(state, action.payload.data.foods);
     case CLEAR_USDA_FOODS:
       return [];
+    case FETCH_USDA_FOODS_CANCEL:
+      return state;
     default:
       return state;
   }
