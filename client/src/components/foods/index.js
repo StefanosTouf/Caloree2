@@ -14,24 +14,12 @@ import UsdaFoodList from './UsdaFoodList';
 import './foods.css';
 import '../diary/main-view/foodsModal.css';
 
-const Foods = ({ fetchUsdaFoods, meal, setSearchQuery, searchQuery }) => {
+const Foods = ({ meal, setSearchQuery, searchQuery }) => {
   const [page, setPage] = useState(0);
 
   useEffect(() => {
     return setSearchQuery('');
   }, []);
-
-  useEffect(() => {
-    const fetchFoods = async () => {
-      fetchUsdaFoods(searchQuery);
-    };
-
-    const timeOut = setTimeout(() => {
-      fetchFoods();
-    }, 500);
-
-    return () => clearTimeout(timeOut);
-  }, [searchQuery]);
 
   return (
     <div className="foods">

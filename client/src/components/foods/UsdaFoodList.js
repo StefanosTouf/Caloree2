@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 
 import {
   fetchUsdaFoods,
-  fetchUsdaFoodsNextPage,
   selectFood,
   fetchDetailedUsdaFood,
+  clearUsdaFoods,
 } from '../../actions/index';
 import FoodList from './FoodList';
 
@@ -13,21 +13,21 @@ import './foods.css';
 
 const UsdaFoodList = ({
   fetchUsdaFoods,
-  fetchedFoods,
-  fetchUsdaFoodsNextPage,
+  fetchedUsdaFoods,
   meal,
   selectFood,
   fetchDetailedUsdaFood,
+  clearUsdaFoods,
 }) => {
   return (
     <>
       <FoodList
         fetchFoods={fetchUsdaFoods}
-        foods={fetchedFoods}
-        fetchFoodsNextPage={fetchUsdaFoodsNextPage}
+        foods={fetchedUsdaFoods}
         selectFood={selectFood}
         fetchDetailedFood={fetchDetailedUsdaFood}
         meal={meal}
+        clearFoods={clearUsdaFoods}
       />
     </>
   );
@@ -35,13 +35,13 @@ const UsdaFoodList = ({
 
 const mapStateToProps = (state) => {
   return {
-    fetchedFoods: state.fetchedFoods,
+    fetchedUsdaFoods: state.fetchedUsdaFoods,
   };
 };
 
 export default connect(mapStateToProps, {
   fetchUsdaFoods,
-  fetchUsdaFoodsNextPage,
   selectFood,
   fetchDetailedUsdaFood,
+  clearUsdaFoods,
 })(UsdaFoodList);

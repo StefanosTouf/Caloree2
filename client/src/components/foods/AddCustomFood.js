@@ -18,7 +18,7 @@ const AddCustomFood = ({ addCustomFood }) => {
       <div className="ui segment">
         <NutrientsForm
           onSubmit={onSubmit}
-          label="Add custom food"
+          label="Add custom food. Values are per 100g"
           foodDescription
           name="addCustomFood"
         />

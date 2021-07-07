@@ -10,7 +10,8 @@ import {
   FETCH_LOGGED_FOODS,
   CLEAR_LOGGED_FOODS,
   FETCH_USDA_FOODS,
-  CLEAR_FOODS,
+  CLEAR_USDA_FOODS,
+  CLEAR_CUSTOM_FOODS,
   FETCH_USDA_FOODS_NEXT_PAGE,
   DELETE_MEAL,
   EDIT_MEAL_NAME,
@@ -20,9 +21,7 @@ import {
   ADD_LOGGED_FOOD,
   DELETE_LOGGED_FOODS,
   ADD_LOG,
-  UPDATE_LOG,
   FETCH_CUSTOM_FOODS,
-  FETCH_CUSTOM_FOODS_NEXT_PAGE,
   FETCH_DETAILED_CUSTOM_FOOD,
   SELECT_CUSTOM_FOOD,
   SELECT_FOOD,
@@ -31,8 +30,6 @@ import {
   ADD_CUSTOM_FOOD,
   UPDATE_USER_NUTRIENT_TARGETS,
   SET_SEARCH_QUERY,
-  DELETE_CUSTOM_FOOD,
-  FETCH_USER_INF,
   RESET_SELECT_LOGGED_FOOD,
 } from './types';
 
@@ -47,11 +44,10 @@ import axios from 'axios';
 import _ from 'lodash';
 
 import { calculateAmountOfNutrient } from '../other/nutrientCalculations';
-import configNutrients from '../other/configNutrients';
 import history from '../history';
 import flattenObjectArray from '../other/flattenObjectArray';
 
-export const fetchLog = (date, getState) => async (dispatch) => {
+export const fetchLog = (date) => async (dispatch) => {
   const response = await logs.get('', {
     params: {
       date: date,
@@ -273,9 +269,15 @@ export const setDate = (date) => {
   };
 };
 
-export const clearFoods = () => {
+export const clearUsdaFoods = () => {
   return {
-    type: CLEAR_FOODS,
+    type: CLEAR_USDA_FOODS,
+  };
+};
+
+export const clearCustomFoods = () => {
+  return {
+    type: CLEAR_CUSTOM_FOODS,
   };
 };
 
@@ -283,20 +285,6 @@ export const clearDetailedFood = () => {
   return {
     type: CLEAR_DETAILED_FOOD,
   };
-};
-
-export const fetchUsdaFoods = (query) => async (dispatch) => {
-  const response = await usda.get('/foods/search', {
-    params: {
-      query,
-    },
-  });
-
-  console.log('asdwd');
-  dispatch({
-    type: FETCH_USDA_FOODS,
-    payload: response.data,
-  });
 };
 
 export const fetchDetailedUsdaFood = (fdcId) => async (dispatch) => {
@@ -308,7 +296,7 @@ export const fetchDetailedUsdaFood = (fdcId) => async (dispatch) => {
   });
 };
 
-export const fetchUsdaFoodsNextPage = (query, page) => async (dispatch) => {
+export const fetchUsdaFoods = (query, page) => async (dispatch) => {
   const response = await usda.get('/foods/search', {
     params: {
       query,
@@ -317,7 +305,7 @@ export const fetchUsdaFoodsNextPage = (query, page) => async (dispatch) => {
   });
 
   dispatch({
-    type: FETCH_USDA_FOODS_NEXT_PAGE,
+    type: FETCH_USDA_FOODS,
     payload: {
       data: response.data,
       page,
@@ -349,31 +337,16 @@ export const fetchCustomFoods = (query) => async (dispatch) => {
 export const fetchDetailedCustomFood = (id) => async (dispatch) => {
   const response = await customFoods.get(`/${id}`);
 
+  const flattenedTargets = flattenObjectArray(
+    response.data.foodNutrients,
+    '_trackedNutrient'
+  );
+
   dispatch({
     type: FETCH_DETAILED_CUSTOM_FOOD,
-    payload: response.data,
+    payload: { ...response.data, foodNutrients: flattenedTargets },
   });
 };
-
-export const fetchCustomFoodsNextPage =
-  (query) => async (dispatch, getState) => {
-    const nextPage = getState().foodsPage + 1;
-
-    const response = await customFoods.get('', {
-      params: {
-        query,
-        _page: nextPage,
-      },
-    });
-
-    dispatch({
-      type: FETCH_CUSTOM_FOODS_NEXT_PAGE,
-      payload: {
-        data: response.data,
-        page: nextPage,
-      },
-    });
-  };
 
 export const selectCustomFood = (id) => {
   return {
@@ -384,7 +357,6 @@ export const selectCustomFood = (id) => {
 
 export const clearSelection = () => async (dispatch) => {
   dispatch(clearDetailedFood());
-  dispatch(clearFoods());
   dispatch(selectFood(0));
 };
 
@@ -446,6 +418,14 @@ export const setSearchQuery = (query) => {
 
 export const fetchUser = () => async (dispatch) => {
   const response = await axios.get('/api/user');
+
+  if (!response.data._id) {
+    dispatch({
+      type: FETCH_USER,
+      payload: {},
+    });
+    return;
+  }
 
   const flattenedTargets = flattenObjectArray(
     response.data.generalTargets,

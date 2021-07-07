@@ -24,7 +24,16 @@ module.exports = (app) => {
 
   app.get('/api/customFoods/:id', requireLogin, async (req, res) => {
     const { id } = req.params;
-    const customFood = await CustomFood.find({ _id: id, _user: req.user._id });
+    const customFood = await CustomFood.findOne({
+      _id: id,
+      _user: req.user._id,
+    }).populate({
+      path: 'foodNutrients',
+      populate: {
+        path: '_trackedNutrient',
+        model: 'trackedNutrients',
+      },
+    });
 
     res.send(customFood);
   });

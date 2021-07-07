@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import {
   fetchCustomFoods,
-  fetchCustomFoodsNextPage,
   selectCustomFood,
   fetchDetailedCustomFood,
+  clearCustomFoods,
 } from '../../actions/index';
 import FoodList from './FoodList';
 
@@ -13,21 +13,21 @@ import './foods.css';
 
 const UsdaFoodList = ({
   fetchCustomFoods,
-  fetchedFoods,
-  fetchCustomFoodsNextPage,
+  fetchedCustomFoods,
   meal,
   selectCustomFood,
   fetchDetailedCustomFood,
+  clearCustomFoods,
 }) => {
   return (
     <>
       <FoodList
         fetchFoods={fetchCustomFoods}
-        foods={fetchedFoods}
-        fetchFoodsNextPage={fetchCustomFoodsNextPage}
+        foods={fetchedCustomFoods}
         selectFood={selectCustomFood}
         fetchDetailedFood={fetchDetailedCustomFood}
         meal={meal}
+        clearFoods={clearCustomFoods}
       />
     </>
   );
@@ -35,13 +35,13 @@ const UsdaFoodList = ({
 
 const mapStateToProps = (state) => {
   return {
-    fetchedFoods: state.fetchedFoods,
+    fetchedCustomFoods: state.fetchedCustomFoods,
   };
 };
 
 export default connect(mapStateToProps, {
   fetchCustomFoods,
-  fetchCustomFoodsNextPage,
   selectCustomFood,
   fetchDetailedCustomFood,
+  clearCustomFoods,
 })(UsdaFoodList);

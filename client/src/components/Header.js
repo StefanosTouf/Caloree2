@@ -22,7 +22,7 @@ const Header = ({ auth }) => {
         <NavLink to="/settings" className="item" activeClassName="active">
           Settings
         </NavLink>
-        <a href="/api/logout" className="item" activeClassName="active">
+        <a href="/api/logout" className="item">
           Log Out
         </a>
       </div>

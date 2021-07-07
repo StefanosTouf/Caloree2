@@ -7,7 +7,8 @@ import targetsAchievedReducer from './targetsAchievedReducer';
 import userTargetsReducer from './userTargetsReducer';
 import logReducer from './logReducer';
 import loggedFoodsReducer from './loggedFoodsReducer';
-import fetchedFoodsReducer from './fetchedFoodsReducer';
+import fetchedUsdaFoodsReducer from './fetchedUsdaFoodsReducer';
+import fetchedCustomFoodsReducer from './fetchedCustomFoodsReducer';
 
 import detailedFoodReducer from './detailedFoodReducer';
 import selectFoodReducer from './selectFoodReducer';
@@ -23,7 +24,8 @@ export default combineReducers({
   userTargets: userTargetsReducer,
   log: logReducer,
   loggedFoods: loggedFoodsReducer,
-  fetchedFoods: fetchedFoodsReducer,
+  fetchedUsdaFoods: fetchedUsdaFoodsReducer,
+  fetchedCustomFoods: fetchedCustomFoodsReducer,
   detailedFood: detailedFoodReducer,
   selectedFood: selectFoodReducer,
   weightValue: weightValueSelection,
