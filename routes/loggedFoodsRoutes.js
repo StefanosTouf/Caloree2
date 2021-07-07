@@ -44,6 +44,22 @@ module.exports = (app) => {
       });
   });
 
+  app.post(
+    '/api/loggedFoods/copyLoggedFood/:id',
+    requireLogin,
+    async (req, res) => {
+      const { id } = req.params;
+      const { mealId } = req.body;
+      const existingFood = await LoggedFood.findById(id).lean();
+      const newFood = await new LoggedFood({
+        ...existingFood,
+        _meal: mealId,
+        _id: undefined,
+      }).save();
+      res.send(newFood);
+    }
+  );
+
   app.get('/api/loggedFoods', requireLogin, async (req, res) => {
     const { mealId } = req.query;
 

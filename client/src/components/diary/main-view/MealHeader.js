@@ -7,6 +7,7 @@ import {
   editMealName,
   fetchMeal,
   deleteLoggedFoods,
+  pasteLoggedFood,
 } from '../../../actions/index';
 import FoodsModal from './FoodsModal';
 
@@ -18,6 +19,8 @@ const MealHeader = ({
   fetchMeal,
   loggedFoods,
   deleteLoggedFoods,
+  copiedFood,
+  pasteLoggedFood,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
@@ -44,11 +47,6 @@ const MealHeader = ({
     setEditingTitle(false);
   };
 
-  const { energy, protein, carb, fat, fiber } = _.mapKeys(
-    meal.mealTargetsAchieved,
-    'name'
-  );
-
   return (
     <div
       className="meal-header"
@@ -73,10 +71,16 @@ const MealHeader = ({
 
       <div className="ui buttons">
         <button
-          className="ui icon button positive"
-          onClick={() => setModalOpen(true)}
+          className={`ui icon button ${copiedFood ? '' : 'positive'}`}
+          onClick={() =>
+            copiedFood ? pasteLoggedFood(copiedFood, meal) : setModalOpen(true)
+          }
         >
-          <i className="plus icon" />
+          {copiedFood ? (
+            <i className="paste icon" />
+          ) : (
+            <i className="plus icon" />
+          )}
         </button>
         <button
           className="ui icon button primary"
@@ -105,6 +109,7 @@ const mapStateToProps = (state, ownState) => {
   return {
     meal: state.meals[ownState.mealId],
     loggedFoods: state.loggedFoods,
+    copiedFood: state.copiedFood,
   };
 };
 
@@ -113,4 +118,5 @@ export default connect(mapStateToProps, {
   deleteMeal,
   fetchMeal,
   deleteLoggedFoods,
+  pasteLoggedFood,
 })(MealHeader);

@@ -17,6 +17,8 @@ import searchQueryReducer from './searchQueryReducer';
 
 import authReducer from './authReducer';
 
+import copiedFoodReducer from './copiedFoodReducer';
+
 export default combineReducers({
   meals: mealsReducer,
   date: dateReducer,
@@ -32,4 +34,5 @@ export default combineReducers({
   form: formReducer,
   searchQuery: searchQueryReducer,
   auth: authReducer,
+  copiedFood: copiedFoodReducer,
 });

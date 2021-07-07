@@ -31,6 +31,8 @@ import {
   UPDATE_USER_NUTRIENT_TARGETS,
   SET_SEARCH_QUERY,
   RESET_SELECT_LOGGED_FOOD,
+  COPY_LOGGED_FOOD,
+  PASTE_LOGGED_FOOD,
 } from './types';
 
 import logs from '../apis/logs';
@@ -374,12 +376,32 @@ export const selectLoggedFood = (loggedFood) => {
   };
 };
 
-export const resetSelectLoggedFood = (log) => {
+export const resetSelectLoggedFood = (loggedFood) => {
   return {
     type: RESET_SELECT_LOGGED_FOOD,
-    payload: log,
+    payload: loggedFood,
   };
 };
+
+export const copyLoggedFood = (loggedFoodId) => {
+  return {
+    type: COPY_LOGGED_FOOD,
+    payload: loggedFoodId,
+  };
+};
+
+export const pasteLoggedFood =
+  (loggedFoodId, { _id, _log }) =>
+  async (dispatch) => {
+    const response = await foods.post(`/copyLoggedFood/${loggedFoodId}`, {
+      mealId: _id,
+    });
+    dispatch(updateLog(_log));
+    dispatch({
+      type: PASTE_LOGGED_FOOD,
+      payload: response.data,
+    });
+  };
 
 export const addCustomFood = (customFood) => async (dispatch) => {
   const response = await customFoods.post('', customFood);
