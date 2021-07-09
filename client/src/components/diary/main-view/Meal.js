@@ -48,7 +48,8 @@ const Meal = ({
 
             <div className="ui icon  buttons delete">
               <button
-                className="ui circular icon button "
+                style={{ padding: '0.4rem' }}
+                className="ui basic icon button "
                 onClick={(e) => {
                   copyLoggedFood(_id);
                   e.stopPropagation();
@@ -57,7 +58,8 @@ const Meal = ({
                 <i className="copy icon" />
               </button>
               <button
-                className="ui negative circular icon button "
+                style={{ padding: '0.4rem' }}
+                className="ui negative basic icon button "
                 onClick={(e) => {
                   deleteLoggedFood(_id, meal);
                   e.stopPropagation();
