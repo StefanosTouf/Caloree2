@@ -12,7 +12,7 @@ export default (state = initState, action) => {
   switch (action.type) {
     case FETCH_USDA_FOODS:
       if (action.payload.id !== state.fetchRequestId) {
-        return state;
+        return { ...initState, fetchRequestId: state.fetchRequestId };
       }
       return {
         foods:

@@ -17,6 +17,7 @@ const DetailedFoodDisplay = ({
   clearSelection,
   meal,
   addLoggedFood,
+  userTargets,
 }) => {
   const [calculatorValue, setCalculatorValue] = useState(100);
 
@@ -60,19 +61,21 @@ const DetailedFoodDisplay = ({
   };
 
   const renderNutrients = () => {
-    return detailedFood.foodNutrients.map(
-      ({ number, name, amount, unitLabel, label }) => {
-        return (
-          <div key={name} className="column">
-            {`${label}:  `}
-            <b>
-              {calculateAmountOfNutrient(amount, calculatorValue)}
-              {unitLabel}
-            </b>
-          </div>
-        );
-      }
-    );
+    const foodNutrientsObj = _.mapKeys(detailedFood.foodNutrients, 'shortName');
+
+    return Object.keys(userTargets).map((nutrient) => {
+      const { number, name, amount, unitLabel, label } =
+        foodNutrientsObj[nutrient];
+      return (
+        <div key={name} className="column">
+          {`${label}:  `}
+          <b>
+            {calculateAmountOfNutrient(amount, calculatorValue)}
+            {unitLabel}
+          </b>
+        </div>
+      );
+    });
   };
 
   const renderSegment = () => {
@@ -92,7 +95,7 @@ const DetailedFoodDisplay = ({
               <div className="ui four wide column">
                 <div className="ui right fluid labeled input">
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter weight"
                     value={calculatorValue}
                     onChange={(e) => setCalculatorValue(e.target.value)}
@@ -126,6 +129,7 @@ const mapStateToProps = (state) => {
   return {
     detailedFood: state.detailedFood,
     selectedFood: state.selectedFood,
+    userTargets: state.userTargets,
   };
 };
 
