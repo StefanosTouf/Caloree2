@@ -35,7 +35,7 @@ const UsdaFoodList = ({
 
 const mapStateToProps = (state) => {
   return {
-    fetchedUsdaFoods: state.fetchedUsdaFoods,
+    fetchedUsdaFoods: state.fetchedUsdaFoods.foods,
   };
 };
 

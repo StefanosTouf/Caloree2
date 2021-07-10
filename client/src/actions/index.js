@@ -33,6 +33,7 @@ import {
   RESET_SELECT_LOGGED_FOOD,
   COPY_LOGGED_FOOD,
   PASTE_LOGGED_FOOD,
+  START_FETCH_USDA_FOODS,
 } from './types';
 
 import logs from '../apis/logs';
@@ -299,6 +300,13 @@ export const fetchDetailedUsdaFood = (fdcId) => async (dispatch) => {
 };
 
 export const fetchUsdaFoods = (query, page) => async (dispatch) => {
+  const randomId = Math.floor(Math.random() * 1000000);
+
+  dispatch({
+    type: START_FETCH_USDA_FOODS,
+    payload: randomId,
+  });
+
   const response = await usda.get('/foods/search', {
     params: {
       query,
@@ -311,6 +319,7 @@ export const fetchUsdaFoods = (query, page) => async (dispatch) => {
     payload: {
       data: response.data,
       page,
+      id: randomId,
     },
   });
 };
