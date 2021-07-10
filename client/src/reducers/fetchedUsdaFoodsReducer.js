@@ -23,7 +23,7 @@ export default (state = initState, action) => {
       };
     case START_FETCH_USDA_FOODS:
       return {
-        ...initState,
+        ...state,
         fetchRequestId: action.payload,
       };
     case CLEAR_USDA_FOODS:

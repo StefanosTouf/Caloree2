@@ -22,7 +22,6 @@ const FoodList = ({
   }, []);
 
   useRemountEffect(() => {
-    console.log('now1');
     fetchFoods(searchQuery, resultsPage);
   }, [resultsPage]);
 
@@ -33,7 +32,6 @@ const FoodList = ({
         return setResultsPage(1);
       }
       fetchFoods(searchQuery, 1);
-      console.log('now2');
     };
 
     const timeout = setTimeout(() => {
@@ -46,36 +44,42 @@ const FoodList = ({
   return (
     <>
       <div className="ui middle aligned selection list foods-list">
-        {foods.map(
-          (
-            { fdcId, description, brandName, additionalDescriptions, _id },
-            index
-          ) => {
-            return (
-              <div
-                className="item"
-                key={index}
-                onClick={() => selectFood(fdcId || _id)}
-              >
-                <div className="content">
-                  <div>
-                    {`${description}${brandName ? `, ${brandName}` : ''}${
-                      additionalDescriptions
-                        ? `, ${additionalDescriptions}`
-                        : ''
-                    }`}
+        {foods.length > 0 ? (
+          <>
+            {foods.map(
+              (
+                { fdcId, description, brandName, additionalDescriptions, _id },
+                index
+              ) => {
+                return (
+                  <div
+                    className="item"
+                    key={index}
+                    onClick={() => selectFood(fdcId || _id)}
+                  >
+                    <div className="content">
+                      <div>
+                        {`${description}${brandName ? `, ${brandName}` : ''}${
+                          additionalDescriptions
+                            ? `, ${additionalDescriptions}`
+                            : ''
+                        }`}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          }
+                );
+              }
+            )}
+            <button
+              className="ui button"
+              onClick={() => setResultsPage(resultsPage + 1)}
+            >
+              Load More
+            </button>
+          </>
+        ) : (
+          <div>Loading...</div>
         )}
-        <button
-          className="ui button"
-          onClick={() => setResultsPage(resultsPage + 1)}
-        >
-          Load More
-        </button>
       </div>
       <DetailedFoodDisplay meal={meal} fetchDetailedFood={fetchDetailedFood} />
     </>
