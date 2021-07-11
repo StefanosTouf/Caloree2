@@ -10,22 +10,28 @@ import './Calendar.css';
 const CalendarWrapper = ({ setDate, date }) => {
   useEffect(() => {
     if (!date) {
-      setDate(new Date());
+      const nowDate = new Date();
+      const shortDate =
+        nowDate.getFullYear() +
+        '-' +
+        ('0' + (nowDate.getMonth() + 1)).slice(-2) +
+        '-' +
+        ('0' + nowDate.getDate()).slice(-2);
+
+      setDate(shortDate);
     }
   }, []);
 
   return (
     <div className="calendar-wrapper">
-      <Calendar
-        className="react-calendars"
-        onChange={(newDate) => {
-          if (date !== newDate) {
-            setDate(newDate);
-          }
+      <input
+        type="date"
+        id="start"
+        name="trip-start"
+        value={date}
+        onChange={(e) => {
+          setDate(e.target.value);
         }}
-        value={date ? date : new Date()}
-        maxDetail="month"
-        minDetail="year"
       />
     </div>
   );

@@ -5,6 +5,7 @@ import { fetchMeals, addMeal, addLogAndAppendMeal } from '../../../actions';
 
 import Meal from './Meal';
 import MealHeader from './MealHeader';
+import CalendarWrapper from './CalendarWrapper';
 
 const TodaysDiary = ({
   meals,
@@ -48,10 +49,10 @@ const TodaysDiary = ({
     <div id="diary-wrapper">
       <h3 class="ui top attached header" id="diary-header">
         <div className="ui two column grid">
-          <div className="ui twelve wide column">
-            <h2>{`${date}`.substring(0, 10)}</h2>
+          <div className="ui twelve wide computer twelve wide tablet ten wide mobile column">
+            <CalendarWrapper />
           </div>
-          <div className="ui four wide column">
+          <div className="ui four wide computer four wide tablet six wide mobile column">
             <button className="ui button positive" onClick={handleAddMeal}>
               Add Meal
             </button>

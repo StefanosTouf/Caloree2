@@ -66,7 +66,9 @@ const DetailedInfo = ({ userTargets, targetsAchieved }) => {
   return (
     <div className="ui segment" id="detailed-info">
       <h3 className="ui header">Detailed Info</h3>
-      <div className="ui five column grid">{renderProgressBars()}</div>
+      <div className="ui stackable five column grid">
+        {renderProgressBars()}
+      </div>
     </div>
   );
 };

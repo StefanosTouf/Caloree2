@@ -12,9 +12,6 @@ const MainView = () => {
   return (
     <div className="ui grid" id="main-view">
       <div className="four wide column side computer only">
-        <div id="calendar-row">
-          <CalendarWrapper />
-        </div>
         <div id="general-row">
           <GeneralInfo />
         </div>
@@ -28,10 +25,7 @@ const MainView = () => {
       <div className="sixteen wide column tablet only mobile only">
         <ResetLogView />
       </div>
-      <div className="eight wide column tablet only mobile only">
-        <CalendarWrapper />
-      </div>
-      <div className="eight wide column tablet only mobile only">
+      <div className="sixteen wide column tablet only mobile only">
         <GeneralInfo />
       </div>
 

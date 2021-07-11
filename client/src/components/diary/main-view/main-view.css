@@ -10,7 +10,7 @@
 #main-view .side {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     min-height: 50rem;
 }
 
@@ -30,7 +30,7 @@
 }
 
 #todays-diary {
-    min-height: 46rem;
+    height: 45rem;
     overflow-y: auto;
     overflow-x: hidden;
 }
