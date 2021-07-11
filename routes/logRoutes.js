@@ -10,11 +10,7 @@ module.exports = (app) => {
   app.get('/api/logs', requireLogin, async (req, res) => {
     const { date } = req.query;
     const populatedLog = await Log.findOne({
-      date: {
-        $gt: new Date(date).setHours(0, 0, 0, 0),
-        $lt: new Date(date).setHours(24, 0, 0, 0),
-      },
-      _user: req.user._id,
+      date: new Date(date),
     }).populate({
       path: 'targetsAchieved',
       populate: {
