@@ -16,7 +16,6 @@ const CalendarWrapper = ({ setDate, date }) => {
         ('0' + (nowDate.getMonth() + 1)).slice(-2) +
         '-' +
         ('0' + nowDate.getDate()).slice(-2);
-
       setDate(shortDate);
     }
   }, []);

@@ -11,6 +11,7 @@ module.exports = (app) => {
     const { date } = req.query;
     const populatedLog = await Log.findOne({
       date: new Date(date),
+      _user: req.user._id,
     }).populate({
       path: 'targetsAchieved',
       populate: {
