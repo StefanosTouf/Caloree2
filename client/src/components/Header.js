@@ -7,7 +7,7 @@ const Header = ({ auth }) => {
   const loggedInHeader = (
     <div
       className="ui secondary pointing menu"
-      style={{ height: '4rem', fontSize: '1.35rem' }}
+      style={{ height: '4rem', fontSize: '1.15rem' }}
     >
       <NavLink to="/diary" className="item" exact>
         Caloree
@@ -32,7 +32,7 @@ const Header = ({ auth }) => {
   const loggedOutHeader = (
     <div
       className="ui secondary pointing menu"
-      style={{ height: '4rem', fontSize: '1.35rem' }}
+      style={{ height: '4rem', fontSize: '1.15rem' }}
     >
       <NavLink to="/" className="item" exact>
         Caloree

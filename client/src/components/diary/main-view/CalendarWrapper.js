@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import Calendar from 'react-calendar';
 
 import { connect } from 'react-redux';
 
