@@ -1,6 +1,8 @@
 # Caloree2
 
-Caloree2 is a fitness tracker web app with the base functionality of other popular fitness trackers. The design and functionality is heavily based on the app Cronometer. This is a second version of the Caloree project https://github.com/StefanosTouf/Caloree which was made as a prototype, without the use of real back end technologies. This time around, a full technology stack has been deployed from front to back
+Caloree2 is a fitness tracker web app with the base functionality of other popular fitness trackers. The design and functionality is heavily based on the app Cronometer. This is a second version of the Caloree project https://github.com/StefanosTouf/Caloree which was made as a prototype, without the use of real back end technologies. This time around, a full tech stack has been deployed from front to back
+
+**You can see a live version of the app deployed on heroku at: https://caloree.herokuapp.com/**
 
 ## Where does Caloree2 get its food related data?
 Caloree2 uses the **USDA Food Data Central api**  to search foods and their nutritional values. https://fdc.nal.usda.gov/api-guide.html
