@@ -405,10 +405,16 @@ export const pasteLoggedFood =
     const response = await foods.post(`/copyLoggedFood/${loggedFoodId}`, {
       mealId: _id,
     });
+
+    const flattenedTargets = flattenObjectArray(
+      response.data.foodNutrients,
+      '_trackedNutrient'
+    );
+
     dispatch(updateLog(_log));
     dispatch({
       type: PASTE_LOGGED_FOOD,
-      payload: response.data,
+      payload: { ...response.data, foodNutrients: flattenedTargets },
     });
   };
 

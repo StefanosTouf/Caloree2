@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 
 import { setDate } from '../../../actions/index';
 
+import Calendar from 'react-calendar';
+
 import './Calendar.css';
 
 const CalendarWrapper = ({ setDate, date }) => {

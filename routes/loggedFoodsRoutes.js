@@ -55,8 +55,21 @@ module.exports = (app) => {
         ...existingFood,
         _meal: mealId,
         _id: undefined,
-      }).save();
-      res.send(newFood);
+      })
+        .save()
+        .then(async (doc) => {
+          const populatedLoggedFood = await doc
+            .populate({
+              path: 'foodNutrients',
+              populate: {
+                path: '_trackedNutrient',
+                model: 'trackedNutrients',
+              },
+            })
+            .execPopulate();
+
+          res.send(populatedLoggedFood);
+        });
     }
   );
 
