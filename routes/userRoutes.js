@@ -4,21 +4,24 @@ const _ = require('lodash');
 
 const User = mongoose.model('users');
 const TrackedNutrient = mongoose.model('trackedNutrients');
+const populateTrackedNutrientsRefArray = require('../utils/populateTrackedNutrientsRefArray');
 
 module.exports = (app) => {
   app.get('/api/user', async (req, res) => {
     if (!req.user) {
       return res.send({});
     }
-    const populatedUser = await User.findById(req.user._id).populate({
-      path: 'generalTargets',
-      populate: {
-        path: '_trackedNutrient',
-        model: 'trackedNutrients',
-      },
+    User.findById(req.user._id).exec(async (err, doc) => {
+      console.log(doc);
+      if (!doc) {
+        return res.send({});
+      }
+      const populated = await populateTrackedNutrientsRefArray(
+        doc,
+        'generalTargets'
+      );
+      res.send(populated);
     });
-
-    res.send(populatedUser);
   });
 
   app.patch('/api/user', async (req, res) => {
@@ -34,18 +37,12 @@ module.exports = (app) => {
     }
 
     req.user.generalTargets = parsedNewNutrientTargets;
-    const user = await req.user.save();
-
-    const populatedUser = await user
-      .populate({
-        path: 'generalTargets',
-        populate: {
-          path: '_trackedNutrient',
-          model: 'trackedNutrients',
-        },
-      })
-      .execPopulate();
-
-    res.send(populatedUser);
+    req.user.save().then(async (doc) => {
+      const populated = await populateTrackedNutrientsRefArray(
+        doc,
+        'generalTargets'
+      );
+      res.send(populated);
+    });
   });
 };

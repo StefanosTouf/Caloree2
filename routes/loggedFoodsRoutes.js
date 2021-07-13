@@ -4,6 +4,7 @@ const _ = require('lodash');
 
 const LoggedFood = mongoose.model('loggedFoods');
 const TrackedNutrient = mongoose.model('trackedNutrients');
+const populateTrackedNutrientsRefArray = require('../utils/populateTrackedNutrientsRefArray');
 
 module.exports = (app) => {
   app.post('/api/loggedFoods', requireLogin, async (req, res) => {
@@ -30,16 +31,10 @@ module.exports = (app) => {
     })
       .save()
       .then(async (doc) => {
-        const populatedLoggedFood = await doc
-          .populate({
-            path: 'foodNutrients',
-            populate: {
-              path: '_trackedNutrient',
-              model: 'trackedNutrients',
-            },
-          })
-          .execPopulate();
-
+        const populatedLoggedFood = await populateTrackedNutrientsRefArray(
+          doc,
+          'foodNutrients'
+        );
         res.send(populatedLoggedFood);
       });
   });
@@ -51,22 +46,17 @@ module.exports = (app) => {
       const { id } = req.params;
       const { mealId } = req.body;
       const existingFood = await LoggedFood.findById(id).lean();
-      const newFood = await new LoggedFood({
+      await new LoggedFood({
         ...existingFood,
         _meal: mealId,
         _id: undefined,
       })
         .save()
         .then(async (doc) => {
-          const populatedLoggedFood = await doc
-            .populate({
-              path: 'foodNutrients',
-              populate: {
-                path: '_trackedNutrient',
-                model: 'trackedNutrients',
-              },
-            })
-            .execPopulate();
+          const populatedLoggedFood = await populateTrackedNutrientsRefArray(
+            doc,
+            'foodNutrients'
+          );
 
           res.send(populatedLoggedFood);
         });
@@ -76,14 +66,19 @@ module.exports = (app) => {
   app.get('/api/loggedFoods', requireLogin, async (req, res) => {
     const { mealId } = req.query;
 
-    const loggedFoods = await LoggedFood.find({ _meal: mealId }).populate({
-      path: 'foodNutrients',
-      populate: {
-        path: '_trackedNutrient',
-        model: 'trackedNutrients',
-      },
+    LoggedFood.find({ _meal: mealId }).exec(async (err, docs) => {
+      const populatedLoggedFoods = await Promise.all(
+        docs.map(async (doc) => {
+          const populated = await populateTrackedNutrientsRefArray(
+            doc,
+            'foodNutrients'
+          );
+          return populated;
+        })
+      );
+
+      res.send(populatedLoggedFoods);
     });
-    res.send({ loggedFoods });
   });
 
   app.delete('/api/loggedFoods/:id', requireLogin, async (req, res) => {

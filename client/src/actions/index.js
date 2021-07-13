@@ -197,7 +197,7 @@ export const fetchLoggedFoods = (mealId) => async (dispatch) => {
     },
   });
 
-  const flattenedLoggedFoods = response.data.loggedFoods.map((food) => {
+  const flattenedLoggedFoods = response.data.map((food) => {
     return {
       ...food,
       foodNutrients: flattenObjectArray(food.foodNutrients, '_trackedNutrient'),

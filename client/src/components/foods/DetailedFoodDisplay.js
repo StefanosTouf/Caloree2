@@ -52,8 +52,8 @@ const DetailedFoodDisplay = ({
         <h3 className="ui header">
           <div className="content">
             {`${description}${brandName ? `, ${brandName}` : ''}${
-              brandOwner ? `, ${brandOwner}` : ''
-            }${additionalDescriptions ? `, ${additionalDescriptions}` : ''}`}
+              additionalDescriptions ? `, ${additionalDescriptions}` : ''
+            }`}
           </div>
         </h3>
       );

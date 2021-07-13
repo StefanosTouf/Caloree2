@@ -5,21 +5,24 @@ const getEntireDay = require('../utils/getEntireDay');
 
 const TrackedNutrient = mongoose.model('trackedNutrients');
 const Log = mongoose.model('logs');
+const populateTrackedNutrientsRefArray = require('../utils/populateTrackedNutrientsRefArray');
 
 module.exports = (app) => {
   app.get('/api/logs', requireLogin, async (req, res) => {
     const { date } = req.query;
-    const populatedLog = await Log.findOne({
+    await Log.findOne({
       date: new Date(date),
       _user: req.user._id,
-    }).populate({
-      path: 'targetsAchieved',
-      populate: {
-        path: '_trackedNutrient',
-        model: 'trackedNutrients',
-      },
+    }).exec(async (err, doc) => {
+      if (!doc) {
+        return res.send({});
+      }
+      const populated = await populateTrackedNutrientsRefArray(
+        doc,
+        'targetsAchieved'
+      );
+      res.send(populated);
     });
-    res.send(populatedLog);
   });
 
   app.get('/api/logs/updatedLog/:id', requireLogin, async (req, res) => {
@@ -51,17 +54,11 @@ module.exports = (app) => {
     })
       .save()
       .then(async (doc) => {
-        const populatedLog = await doc
-          .populate({
-            path: 'targetsAchieved',
-            populate: {
-              path: '_trackedNutrient',
-              model: 'trackedNutrients',
-            },
-          })
-          .execPopulate();
-
-        res.send(populatedLog);
+        const populated = await populateTrackedNutrientsRefArray(
+          doc,
+          'targetsAchieved'
+        );
+        res.send(populated);
       });
   });
 };

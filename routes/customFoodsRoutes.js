@@ -4,6 +4,7 @@ const _ = require('lodash');
 
 const CustomFood = mongoose.model('customFoods');
 const TrackedNutrient = mongoose.model('trackedNutrients');
+const populateTrackedNutrientsRefArray = require('../utils/populateTrackedNutrientsRefArray');
 
 module.exports = (app) => {
   app.get('/api/customFoods', requireLogin, async (req, res) => {
@@ -24,18 +25,17 @@ module.exports = (app) => {
 
   app.get('/api/customFoods/:id', requireLogin, async (req, res) => {
     const { id } = req.params;
-    const customFood = await CustomFood.findOne({
+    CustomFood.findOne({
       _id: id,
       _user: req.user._id,
-    }).populate({
-      path: 'foodNutrients',
-      populate: {
-        path: '_trackedNutrient',
-        model: 'trackedNutrients',
-      },
+    }).exec(async (err, doc) => {
+      console.log(doc);
+      const populated = await populateTrackedNutrientsRefArray(
+        doc,
+        'foodNutrients'
+      );
+      res.send(populated);
     });
-
-    res.send(customFood);
   });
 
   app.post('/api/customFoods', requireLogin, async (req, res) => {
